@@ -207,6 +207,13 @@ class SingleLinkedList {
 		}
 
 	}
+	public void reverseNew() {
+		PersonNode cur=headNode;
+		if (cur.getNextNode()==null||cur.getNextNode().getNextNode()==null) {
+			return;
+		}	
+		
+	}
 	public PersonNode getNodeByNumFromTheEnd(int num) {
 		int size = size();
 		int num1=size-num+1;
