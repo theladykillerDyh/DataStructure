@@ -1,4 +1,6 @@
-package com.example.demo.dyh.main;
+package com.example.demo.dyh.main.list;
+
+import java.util.Stack;
 
 public class SingleLinkedListDemo {
 
@@ -27,13 +29,20 @@ public class SingleLinkedListDemo {
 		singleLinkedList.showList();
 		System.out.println(singleLinkedList.getNodeByNumFromTheEnd(5));
 		singleLinkedList.showReverse();
-		SingleLinkedList newsSingleLinkedList=new SingleLinkedList();
+		SingleLinkedList newsSingleLinkedList = new SingleLinkedList();
 		newsSingleLinkedList.addNodeByOrder(personNode6);
 		newsSingleLinkedList.addNodeByOrder(personNode7);
 		singleLinkedList.addAll(newsSingleLinkedList);
 		System.out.println("获取杀死");
 		singleLinkedList.showList();
-		
+		System.out.println("开始新反转");
+		// reverseNew比reverse更加高效
+		singleLinkedList.reverseNew();
+		singleLinkedList.showList();
+		System.out.println("开始反向打印");
+		singleLinkedList.reversePrint();
+		System.out.println("开始正向打印");
+		singleLinkedList.showList();
 	}
 
 }
@@ -66,6 +75,20 @@ class SingleLinkedList {
 
 		}
 
+	}
+
+	// 利用stack实现单向链表的逆序打印，此方法不会更改链表本身的结构，如果先将链表逆序，再打印链表，会改变链表的结构
+	// 利用中间容器不改变单向链表的结构；
+	public void reversePrint() {
+		Stack<PersonNode> stack = new Stack<PersonNode>();
+		PersonNode curNode = headNode.getNextNode();
+		while (curNode != null) {
+			stack.add(curNode);
+			curNode = curNode.getNextNode();
+		}
+		while (stack.size() != 0) {
+			System.out.println(stack.pop());
+		}
 	}
 
 	// 默认按照升序排列，添加是从headNode起的。
@@ -175,62 +198,74 @@ class SingleLinkedList {
 			temp = temp.getNextNode();
 		}
 	}
+
 	public void reverse() {
 		SingleLinkedList newSingleLinkedList = new SingleLinkedList();
-		PersonNode temp=headNode;
-		if (temp.getNextNode()==null||temp.getNextNode().getNextNode()==null) {
+		PersonNode temp = headNode;
+		if (temp.getNextNode() == null || temp.getNextNode().getNextNode() == null) {
 			return;
-		}	
+		}
 		try {
-			//反转
-			while(true) {
-				PersonNode firstNode=temp.getNextNode();
-				PersonNode secondNode=temp.getNextNode().getNextNode();
-				if (secondNode==null) {
-					
+			// 反转
+			while (true) {
+				PersonNode firstNode = temp.getNextNode();
+				PersonNode secondNode = temp.getNextNode().getNextNode();
+				if (secondNode == null) {
+
 					firstNode.setNextNode(headNode.getNextNode());
-					headNode.setNextNode(firstNode);//保存头节点的nestnode
+					headNode.setNextNode(firstNode);// 保存头节点的nestnode
 					temp.setNextNode(null);
 					break;
 				}
-				firstNode.setNextNode(secondNode.getNextNode());//保存第二个节点的后一个节点
-				secondNode.setNextNode(headNode.getNextNode());//将遍历到的第二个节点放到headnode后面
-				headNode.setNextNode(secondNode);//保存头节点的nestnode
-				if (firstNode.getNextNode()==null) {
+				firstNode.setNextNode(secondNode.getNextNode());// 保存第二个节点的后一个节点
+				secondNode.setNextNode(headNode.getNextNode());// 将遍历到的第二个节点放到headnode后面
+				headNode.setNextNode(secondNode);// 保存头节点的nestnode
+				if (firstNode.getNextNode() == null) {
 					System.out.println("反转完成，退出");
 					break;
 				}
-				temp=temp.getNextNode();
+				temp = temp.getNextNode();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
+
 	public void reverseNew() {
-		PersonNode cur=headNode;
-		if (cur.getNextNode()==null||cur.getNextNode().getNextNode()==null) {
+		PersonNode cur = headNode.getNextNode();
+		if (cur == null || cur.getNextNode() == null) {
 			return;
-		}	
-		
+		}
+		PersonNode newHeadNode = new PersonNode(0, 0, null, null);
+		while (cur != null) {
+			PersonNode nextNode = cur.getNextNode();// 暂存nextnode，因为cur要连接新链表的第一个有效节点，如果链接，那么cur.getNextNode失效
+			cur.setNextNode(newHeadNode.getNextNode());
+			newHeadNode.setNextNode(cur);
+			cur = nextNode;
+		}
+		headNode.setNextNode(newHeadNode.getNextNode());
+
 	}
+
 	public PersonNode getNodeByNumFromTheEnd(int num) {
 		int size = size();
-		int num1=size-num+1;
-		if (num1<=0) {
-			System.out.printf("倒数第%d不存在\n",num);
+		int num1 = size - num + 1;
+		if (num1 <= 0) {
+			System.out.printf("倒数第%d不存在\n", num);
 			return null;
 		}
-		int count=0;
-		PersonNode resultNode=null;
-		PersonNode temp=headNode;
-		while(count<num1) {
-			resultNode=temp.getNextNode();
+		int count = 0;
+		PersonNode resultNode = null;
+		PersonNode temp = headNode;
+		while (count < num1) {
+			resultNode = temp.getNextNode();
 			count++;
-			temp=temp.getNextNode();
+			temp = temp.getNextNode();
 		}
 		return resultNode;
 	}
+
 	public void showReverse() {
 		synchronized (headNode) {
 			reverse();
@@ -239,13 +274,14 @@ class SingleLinkedList {
 		}
 
 	}
+
 	public void addAll(SingleLinkedList singleLinkedList) {
-		PersonNode temp=headNode;
-		while(true) {
-			if (temp.getNextNode()==null) {
+		PersonNode temp = headNode;
+		while (true) {
+			if (temp.getNextNode() == null) {
 				break;
 			}
-			temp=temp.getNextNode();
+			temp = temp.getNextNode();
 		}
 		temp.setNextNode(singleLinkedList.headNode.getNextNode());
 	}
