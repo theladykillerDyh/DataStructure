@@ -33,14 +33,49 @@ public class CaculateUtils {
                 return 2;
             case "/":
                 return 2;
-            case "(":
-                return 10;
-            case ")":
-                return 10;
             default:
                 return 0;
 
         }
+    }
+        public static Boolean isOperate(String operateStr) {
+            switch (operateStr) {
+                case "+":
+                    return true;
+                case "-":
+                    return true;
+                case "*":
+                    return true;
+                case "/":
+                    return true;
+                default:
+                    return false;
+
+            }
+
+    }
+    public static Boolean  isLeftBracket(String bracket){
+        if (bracket.equals("(")||bracket.equals("（")){
+            return true;
+        }
+        return false;
+
+    }
+    public static Boolean isRightBracket(String bracket){
+        if (bracket.equals(")")||bracket.equals("）")){
+            return true;
+        }
+        return false;
+
+    }
+    public static Boolean isBracket(String bracket){
+        if (bracket.equals(")")||bracket.equals("）")){
+            return true;
+        }
+        if (bracket.equals("(")||bracket.equals("（")){
+            return true;
+        }
+        return false;
 
     }
 }

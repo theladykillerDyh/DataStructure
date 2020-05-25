@@ -5,9 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 
 //模拟正整数
@@ -19,15 +17,17 @@ public class ReversePolishNotation {
     /**
      * @param args
      */
-    private static Logger logger = LoggerFactory.getLogger(ReversePolishNotation.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReversePolishNotation.class);
 
     public static void main(String[] args) {
+        logger.error("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         String reversePolishNotationString = "12 13 + 55 -";
         ArrayList<String> numList = getArr(reversePolishNotationString);
-        System.out.println(caculate(numList));
+        logger.error("sss:{}", caculate(numList));
         Stack<Object> stack = new Stack<>();
-        String  expression="23 * ( 44 - 32 ) + 99 / 5";
-        ArrayList<String> nums=toReversePolishNotation(expression);
+        String expression = "23 * ( 44 - 32 ) + 99 / 5";
+        ArrayList<String> nums = toReversePolishNotation(expression);
+        logger.error("sss:{}", nums);
         System.out.println(caculate(nums));
     }
 
@@ -59,42 +59,69 @@ public class ReversePolishNotation {
         return (BigDecimal) reversePolishNotationStack.pop();
     }
 
+    /*  1、数字直接入数字栈
+        2、左括号直接入符号栈
+        3、运算符
+        1）如果符号栈为空或者符号栈顶为左括号，直接入栈
+        2）如果该运算符优先级大于符号栈顶，那么直接入栈；如果运算符优先级小于符号栈顶，
+        4、右括号
+        右括号不入符号栈，将符号栈里面的符号加入数字栈，直到符号栈为空或者遇到左括号，最后将左括号丢弃。*/
     private static ArrayList<String> toReversePolishNotation(String Str) {
         List<String> items = getArr(Str);
         Stack<Object> operationStack = new Stack<>();
         Stack<Object> numStack = new Stack<>();
+        Boolean bracketFlag = false;
         for (String item : items) {
             if (CaculateUtils.judageNum(item)) {
                 numStack.push(item);
-                System.out.println("numStack push "+item);
+
             } else {
-                if (operationStack.isEmpty() || (CaculateUtils.operateLevel((String) operationStack.pop()) < CaculateUtils.operateLevel(item)) || item.equals("(")) {
-                    operationStack.push(item);
-                    System.out.println("operationStack push "+item);
-                } else if (item.equals(")")) {
-                    while (true) {
-                        if (operationStack.peek().equals("(")) {
-                            operationStack.pop();
-                            System.out.println("operationStack pop "+item);
-                            break;
-                        } else {
-                            numStack.push(operationStack.pop());
-                            System.out.println("operationStack pop "+item);
-                            System.out.println("numStack push "+item);
-                        }
-                    }
-                } else {
-                    numStack.push(item);
-                    System.out.println("numStack push "+item);
-                }
+                delOperation(operationStack, numStack, item);
             }
         }
-        ArrayList<String> numList = new ArrayList<>();
-        for (Object item : numStack) {
-            numList.add((String) item);
+        while (!operationStack.isEmpty()) {
+            numStack.push(operationStack.pop());
         }
-        return numList;
+        ArrayList<String> list = new ArrayList<>();
+        while (!numStack.isEmpty()) {
+            list.add((String) numStack.pop());
+        }
+        Collections.reverse(list);
+        return list;
 
     }
 
+    private static void delOperation(Stack operationStack, Stack numStack, String item) {
+        //括号处理
+        if (CaculateUtils.isBracket(item)) {
+            if (CaculateUtils.isLeftBracket(item)) {
+                operationStack.push(item);
+            } else if (CaculateUtils.isRightBracket(item)) {
+                //移除所有符号到numStack
+                while (!CaculateUtils.isBracket((String) operationStack.peek())) {
+                    numStack.push(operationStack.pop());
+                }
+                //移除左括号
+                operationStack.pop();
+            }
+        }
+        //运算符处理
+        if (CaculateUtils.isOperate(item)) {
+            if (operationStack.isEmpty() || CaculateUtils.isLeftBracket((String) operationStack.peek()) || CaculateUtils.operateLevel(item) > CaculateUtils.operateLevel((String) operationStack.peek())) {
+                {
+                    operationStack.push(item);
+                }
+
+            } else {
+                do {
+                    numStack.push(operationStack.pop());
+                } while (!operationStack.isEmpty() && (CaculateUtils.operateLevel(item) < CaculateUtils.operateLevel((String) operationStack.peek())));
+                operationStack.push(item);
+            }
+        }
+
+
+    }
 }
+
+
