@@ -20,7 +20,7 @@ public class ReversePolishNotation {
     private static final Logger logger = LoggerFactory.getLogger(ReversePolishNotation.class);
 
     public static void main(String[] args) {
-        logger.error("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+        logger.error("逆波兰表达式");
         String reversePolishNotationString = "12 13 + 55 -";
         ArrayList<String> numList = getArr(reversePolishNotationString);
         logger.error("sss:{}", caculate(numList));
