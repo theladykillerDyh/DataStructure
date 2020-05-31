@@ -12,16 +12,20 @@ public class EightQueen {
     private static final int QUEEN_NUM = 8;
     private static int[] queenArr = new int[QUEEN_NUM];
     private static final Logger logger= LoggerFactory.getLogger(EightQueen.class);
+    private static int count=0;
     public static void main(String[] args) {
         check(0);
+        logger.error("count:{}",count);
     }
 
     private static void check(int n){
-        if (n==8){
+        if (n==QUEEN_NUM){
             //已经放置了8个皇后
-            logger.info("放置皇后数组：｛｝",queenArr);
+            logger.error("放置皇后数组{}",queenArr);
+            count++;
             return;
         }
+        //在第n行（第n个皇后）的时候，遍历每一列
         for (int i=0;i<QUEEN_NUM;i++){
             //将第n个皇后放入第n列
             queenArr[n]=i;
@@ -34,7 +38,7 @@ public class EightQueen {
 
     //检测第n个皇后和前面的皇后是否冲突
     private static boolean judge(int n) {
-        for (int i = 0; i < queenArr.length; i++) {
+        for (int i = 0; i < n; i++) {
             //QUEEN_ARR[i]==QUEEN_ARR[n]表示在同一行
             //Math.abs(i-n)==Math.abs(QUEEN_ARR[i]-QUEEN_ARR[n]) 行的差值等于列的差值，表示在同一斜线(直角等腰三角形的夹角为45度)
             if (queenArr[i] == queenArr[n] || Math.abs(i - n) == Math.abs(queenArr[i] - queenArr[n])) {
