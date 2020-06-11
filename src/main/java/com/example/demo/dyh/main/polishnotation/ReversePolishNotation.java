@@ -13,7 +13,7 @@ import java.util.*;
 /**
  *
  */
-public class ReversePolishNotation {
+public class  ReversePolishNotation {
     /**
      * @param args
      */
